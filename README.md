@@ -32,11 +32,10 @@
 ## Скриншоты
 
 <p align="center">
-  <img src="assets/screenshot_menu.png" alt="Меню и геймплей" width="480"/>
+  <img src="assets/maxresdefault.jpg" alt="Lumen Cascade — геймплей" width="480"/>
 </p>
-<p align="center">
-  <img src="assets/screenshot_gameplay.png" alt="Геймплей" width="480"/>
-</p>
+
+Чтобы добавить коллажи (меню + геймплей), положи в `assets/` файлы `screenshot_menu.png` и `screenshot_gameplay.png` и раскомментируй блок ниже в README (или добавь такие же `<img src="assets/screenshot_menu.png" .../>` и `screenshot_gameplay.png`).
 
 ## Управление
 
