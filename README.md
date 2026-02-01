@@ -15,6 +15,7 @@
 <p align="center">
   <a href="https://godotengine.org"><img src="https://img.shields.io/badge/Godot-4.5-478cbf?logo=godot-engine" alt="Godot 4.5"/></a>
   <a href="https://yandex.ru/games"><img src="https://img.shields.io/badge/Яндекс_Игры-платформа-red" alt="Яндекс Игры"/></a>
+  <a href="#лицензия"><img src="https://img.shields.io/badge/лицензия-образовательный_проект-lightgrey" alt="Лицензия"/></a>
 </p>
 
 ---
@@ -31,12 +32,12 @@
 
 ## Скриншоты
 
-<p align="center">
-  <img src="screenshots/2d7CROtF8u.png" alt="Меню и геймплей" width="480"/>
-</p>
-<p align="center">
-  <img src="screenshots/merged-image-1769800124855.png" alt="Геймплей" width="480"/>
-</p>
+<table>
+<tr>
+<td align="center"><img src="screenshots/2d7CROtF8u.png" alt="Меню и геймплей" width="480"/></td>
+<td align="center"><img src="screenshots/merged-image-1769800124855.png" alt="Геймплей" width="480"/></td>
+</tr>
+</table>
 
 ## Управление
 
