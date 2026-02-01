@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://ckti4ab6e34xw"]
+
+[ext_resource type="Script" uid="uid://cjvec4mylutql" path="res://scripts/fallen_ship.gd" id="1_1b1js"]
+[ext_resource type="Texture2D" uid="uid://c2sc8lckg5rac" path="res://assets/player/PNGs/Main Ship - Base - Very damaged.png" id="1_yhddk"]
+
+[node name="FallenShip" type="Area2D"]
+modulate = Color(0.9832565, 0.86563, 0.80117124, 1)
+scale = Vector2(0.7, 0.7)
+z_index = 0
+script = ExtResource("1_1b1js")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_yhddk")

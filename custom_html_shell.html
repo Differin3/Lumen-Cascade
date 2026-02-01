@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+		<title>$GODOT_PROJECT_NAME</title>
+		<style>
+html, body, #canvas {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+body {
+	color: white;
+	background-color: black;
+	overflow: hidden;
+	touch-action: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+#canvas {
+	display: block;
+	touch-action: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+#canvas:focus {
+	outline: none;
+}
+
+#status, #status-splash, #status-progress {
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+#status, #status-splash {
+	top: 0;
+	bottom: 0;
+}
+
+#status {
+	background-color: #242424;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	visibility: hidden;
+}
+
+#status-splash {
+	max-height: 100%;
+	max-width: 100%;
+	margin: auto;
+}
+
+#status-splash.show-image--false {
+	display: none;
+}
+
+#status-splash.fullsize--true {
+	height: 100%;
+	width: 100%;
+	object-fit: contain;
+}
+
+#status-splash.use-filter--false {
+	image-rendering: pixelated;
+}
+
+#status-progress, #status-notice {
+	display: none;
+}
+
+#status-progress {
+	bottom: 10%;
+	width: 50%;
+	margin: 0 auto;
+}
+
+#status-notice {
+	background-color: #5b3943;
+	border-radius: 0.5rem;
+	border: 1px solid #9b3943;
+	color: #e0e0e0;
+	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+	line-height: 1.3;
+	margin: 0 2rem;
+	overflow: hidden;
+	padding: 1rem;
+	text-align: center;
+	z-index: 1;
+}
+		</style>
+		$GODOT_HEAD_INCLUDE
+		<script src="https://yandex.ru/games/sdk/v2"></script>
+	</head>
+	<body>
+		<canvas id="canvas" tabindex="0">
+			Your browser does not support the canvas tag.
+		</canvas>
+
+		<noscript>
+			Your browser does not support JavaScript.
+		</noscript>
+
+		<div id="status">
+			<img id="status-splash" class="show-image--true fullsize--true use-filter--true" src="$GODOT_SPLASH" alt="">
+			<progress id="status-progress"></progress>
+			<div id="status-notice"></div>
+		</div>
+
+		<script src="$GODOT_URL"></script>
+		<script>
+// Инициализация Яндекс Игр SDK
+let yaGamesInstance = null;
+let yaGamesInitialized = false;
+window.__yaGamesDraft = (window.location.search.indexOf('draft=true') !== -1);
+
+// п. 1.6.1.5: блокируем жесты браузера на canvas, чтобы касания доходили до игры (iOS)
+(function() {
+	var canvas = document.getElementById('canvas');
+	if (canvas) {
+		canvas.addEventListener('touchstart', function(e) { e.preventDefault(); }, { passive: false });
+		canvas.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+	}
+})();
+// Скрытие вкладки или пауза в дебаг-меню: игра ставится на паузу
+window.yaGamesPageHidden = typeof document.hidden !== 'undefined' ? document.hidden : false;
+document.addEventListener('visibilitychange', function() {
+	window.yaGamesPageHidden = document.hidden;
+});
+window.addEventListener('blur', function() { window.yaGamesPageHidden = true; });
+window.addEventListener('focus', function() { window.yaGamesPageHidden = false; });
+
+window.addEventListener('unhandledrejection', function(e) {
+	var msg = (e.reason && (e.reason.message || e.reason + '')) || '';
+	if (msg.indexOf('auth window opener') !== -1 && window.__godotAuthPending) {
+		window.__godotAuthError = msg;
+		window.__godotAuthDone = true;
+		window.__godotAuthPending = false;
+		e.preventDefault();
+	}
+});
+
+window.yaGamesAPI = {
+	init: function() {
+		// Возвращаем Promise для асинхронной инициализации
+		return new Promise(async function(resolve, reject) {
+			try {
+				if (typeof YaGames === 'undefined') {
+					console.warn('YaGames SDK not loaded');
+					yaGamesInitialized = false;
+					resolve(false);
+					return;
+				}
+				yaGamesInstance = await YaGames.init();
+				window.ysdk = yaGamesInstance;
+				yaGamesInitialized = true;
+				console.log('Yandex Games SDK initialized');
+				resolve(true);
+			} catch (error) {
+				console.error('Failed to initialize Yandex Games SDK:', error);
+				yaGamesInitialized = false;
+				resolve(false);
+			}
+		});
+	},
+	
+	showRewardedVideo: function(onRewarded, onError) {
+		if (!yaGamesInitialized || !yaGamesInstance) {
+			console.warn('Yandex Games SDK not initialized');
+			if (onError && typeof onError === 'function') {
+				onError('SDK not initialized');
+			}
+			return;
+		}
+		
+		try {
+			yaGamesInstance.adv.showRewardedVideo({
+				callbacks: {
+					onOpen: function() {
+						console.log('Rewarded video ad opened');
+					},
+					onRewarded: function() {
+						console.log('Rewarded video ad rewarded');
+						if (onRewarded && typeof onRewarded === 'function') {
+							onRewarded();
+						}
+					},
+					onClose: function() {
+						console.log('Rewarded video ad closed');
+					},
+					onError: function(error) {
+						console.error('Rewarded video ad error:', error);
+						if (onError && typeof onError === 'function') {
+							onError(error);
+						}
+					}
+				}
+			});
+		} catch (error) {
+			console.error('Failed to show rewarded video:', error);
+			if (onError && typeof onError === 'function') {
+				onError(error);
+			}
+		}
+	},
+	
+	isInitialized: function() {
+		return yaGamesInitialized && yaGamesInstance !== null;
+	},
+	// Game Ready API
+	gameReady: function() {
+		if (yaGamesInstance && yaGamesInstance.features && yaGamesInstance.features.LoadingAPI && typeof yaGamesInstance.features.LoadingAPI.ready === 'function')
+			yaGamesInstance.features.LoadingAPI.ready();
+	},
+	gameplayStart: function() {
+		if (yaGamesInstance && yaGamesInstance.features && yaGamesInstance.features.GameplayAPI && typeof yaGamesInstance.features.GameplayAPI.start === 'function')
+			yaGamesInstance.features.GameplayAPI.start();
+	},
+	gameplayStop: function() {
+		if (yaGamesInstance && yaGamesInstance.features && yaGamesInstance.features.GameplayAPI && typeof yaGamesInstance.features.GameplayAPI.stop === 'function')
+			yaGamesInstance.features.GameplayAPI.stop();
+	},
+	openAuthDialog: function() {
+		window.__godotAuthDone = false;
+		window.__godotAuthOk = false;
+		window.__godotAuthError = '';
+		window.__godotAuthPending = true;
+		try {
+			var sdk = yaGamesInstance || window.ysdk;
+			if (sdk && sdk.auth && typeof sdk.auth.openAuthDialog === 'function') {
+				sdk.auth.openAuthDialog()
+					.then(function() { window.__godotAuthPending = false; window.__godotAuthOk = true; window.__godotAuthDone = true; })
+					.catch(function(err) { window.__godotAuthPending = false; window.__godotAuthError = (err && err.message) ? err.message : 'auth_failed'; window.__godotAuthDone = true; });
+			} else {
+				window.__godotAuthPending = false;
+				console.warn('Yandex Games: auth not available');
+				window.__godotAuthDone = true;
+			}
+		} catch (e) {
+			window.__godotAuthPending = false;
+			window.__godotAuthError = (e && e.message) ? e.message : 'auth_failed';
+			window.__godotAuthDone = true;
+		}
+	}
+};
+
+// Автоопределение языка через SDK (п. 2.14 требований Яндекса): ждём init, затем запускаем Godot с locale
+const GODOT_CONFIG = $GODOT_CONFIG;
+const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
+
+window.yaGamesAPI.init().then(function(result) {
+	console.log('Yandex Games SDK init result:', result);
+	var lang = 'en';
+	if (yaGamesInstance && yaGamesInstance.environment && yaGamesInstance.environment.i18n && yaGamesInstance.environment.i18n.lang) {
+		lang = yaGamesInstance.environment.i18n.lang;
+	} else {
+		var p = new URLSearchParams(window.location.search).get('lang');
+		if (p) lang = p;
+	}
+	window.yaGamesLocale = lang;
+	GODOT_CONFIG.locale = lang;
+	document.documentElement.lang = lang;
+
+	const engine = new Engine(GODOT_CONFIG);
+	const statusOverlay = document.getElementById('status');
+	const statusProgress = document.getElementById('status-progress');
+	const statusNotice = document.getElementById('status-notice');
+	let initializing = true;
+	let statusMode = '';
+
+	function setStatusMode(mode) {
+		if (statusMode === mode || !initializing) return;
+		if (mode === 'hidden') {
+			statusOverlay.remove();
+			initializing = false;
+			return;
+		}
+		statusOverlay.style.visibility = 'visible';
+		statusProgress.style.display = mode === 'progress' ? 'block' : 'none';
+		statusNotice.style.display = mode === 'notice' ? 'block' : 'none';
+		statusMode = mode;
+	}
+	function setStatusNotice(text) {
+		while (statusNotice.lastChild) statusNotice.removeChild(statusNotice.lastChild);
+		text.split('\n').forEach((line) => {
+			statusNotice.appendChild(document.createTextNode(line));
+			statusNotice.appendChild(document.createElement('br'));
+		});
+	}
+	function displayFailureNotice(err) {
+		console.error(err);
+		setStatusNotice(err instanceof Error ? err.message : (typeof err === 'string' ? err : 'An unknown error occurred.'));
+		setStatusMode('notice');
+		initializing = false;
+	}
+
+	var missing = Engine.getMissingFeatures({ threads: GODOT_THREADS_ENABLED });
+	if (missing.length !== 0) {
+		if (GODOT_CONFIG['serviceWorker'] && GODOT_CONFIG['ensureCrossOriginIsolationHeaders'] && 'serviceWorker' in navigator) {
+			var swPromise = navigator.serviceWorker.getRegistration().catch(function() { return null; });
+			Promise.race([
+				swPromise.then(function(reg) {
+					if (reg != null) return Promise.reject(new Error('Service worker already exists.'));
+					return engine.installServiceWorker();
+				}),
+				new Promise(function(r) { setTimeout(r, 2000); })
+			]).then(function() { window.location.reload(); }).catch(function(err) { console.error(err); });
+		} else {
+			displayFailureNotice('Error\nThe following features required to run Godot projects on the Web are missing:\n' + missing.join('\n'));
+		}
+	} else {
+		setStatusMode('progress');
+		engine.startGame({
+			'onProgress': function (current, total) {
+				if (current > 0 && total > 0) {
+					statusProgress.value = current;
+					statusProgress.max = total;
+				} else {
+					statusProgress.removeAttribute('value');
+					statusProgress.removeAttribute('max');
+				}
+			},
+		}).then(function() {
+			setStatusMode('hidden');
+			var canvas = document.getElementById('canvas');
+			if (canvas && typeof canvas.focus === 'function') canvas.focus();
+		}, displayFailureNotice);
+	}
+});
+		</script>
+	</body>
+</html>

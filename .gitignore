@@ -1,0 +1,16 @@
+# Godot 4+
+.godot/
+/android/
+
+# Локальные настройки экспорта (секреты, пути)
+export_presets_local.cfg
+
+# Сборка веб (опционально — раскомментируй, если не хранить в репо)
+# web_bild/
+# *.zip
+
+# ОС, IDE
+.DS_Store
+Thumbs.db
+*.swp
+*.swo

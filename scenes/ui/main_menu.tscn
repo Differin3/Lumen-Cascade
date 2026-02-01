@@ -1,0 +1,127 @@
+[gd_scene load_steps=4 format=3 uid="uid://1jcohhkp1ljq"]
+
+[ext_resource type="Texture2D" uid="uid://dfrxi0nn6dfbf" path="res://assets/Backgrounds/Desert/desert-backgorund.png" id="1_icvuy"]
+[ext_resource type="Script" uid="uid://dmpa8r03t4jxb" path="res://scripts/main_menu.gd" id="1_main_menu"]
+[ext_resource type="Texture2D" uid="uid://rbji7aslwmkc" path="res://assets/Backgrounds/Desert/clouds.png" id="2_bp267"]
+
+[node name="MainMenu" type="CanvasLayer"]
+script = ExtResource("1_main_menu")
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+scale = Vector2(1.11894, 1)
+motion_scale = Vector2(1.5, 1.5)
+motion_mirroring = Vector2(0, 317)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+z_index = -1
+position = Vector2(160.86652, 625.0001)
+scale = Vector2(1.25677, 1.16912)
+texture = ExtResource("1_icvuy")
+
+[node name="Sprite2D2" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+z_index = -1
+position = Vector2(160.86655, -9)
+scale = Vector2(1.25677, 1.16728)
+texture = ExtResource("1_icvuy")
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2(0, 640)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer2"]
+modulate = Color(1, 1, 1, 0.34901962)
+z_index = 1
+position = Vector2(180.00002, 175.99998)
+scale = Vector2(1.40625, 1.60558)
+texture = ExtResource("2_bp267")
+
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2(0, 640)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer3"]
+modulate = Color(1, 1, 1, 0.9019608)
+z_index = 2
+position = Vector2(180.00002, 98)
+scale = Vector2(1.406, 1.406)
+texture = ExtResource("2_bp267")
+
+[node name="Sprite2D2" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer3"]
+modulate = Color(1, 1, 1, 0.9019608)
+z_index = 2
+position = Vector2(180.00002, 738)
+scale = Vector2(1.406, 1.406)
+texture = ExtResource("2_bp267")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+alignment = 1
+
+[node name="Window" type="NinePatchRect" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+patch_margin_left = 20
+patch_margin_top = 20
+patch_margin_right = 20
+patch_margin_bottom = 20
+
+[node name="ContentContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/Window"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -138.0
+offset_top = -180.0
+offset_right = 315.0
+offset_bottom = 203.0
+grow_vertical = 0
+scale = Vector2(0.7, 0.7)
+alignment = 1
+
+[node name="Title" type="Label" parent="CenterContainer/VBoxContainer/Window/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1.3004385, 1.3395331, 1.6978991, 0.8156863)
+theme_override_colors/font_shadow_color = Color(0.2, 0.4, 0.67058825, 0.7137255)
+theme_override_colors/font_outline_color = Color(0.101960786, 0.2, 0.49803922, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 48
+text = "Lumen Cascade"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PilotLabel" type="Label" parent="CenterContainer/VBoxContainer/Window/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+
+[node name="AuthBenefitsLabel" type="Label" parent="CenterContainer/VBoxContainer/Window/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 14
+text = "Сохранить прогресс в облаке, таблица лидеров"
+horizontal_alignment = 1
+
+[node name="AuthButton" type="Button" parent="CenterContainer/VBoxContainer/Window/ContentContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Войти"
+
+[node name="PlayButton" type="Button" parent="CenterContainer/VBoxContainer/Window/ContentContainer"]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Играть"

@@ -1,0 +1,71 @@
+[gd_scene load_steps=11 format=3 uid="uid://bcpcp2u43vrud"]
+
+[ext_resource type="Texture2D" uid="uid://c4dvcgasdi8hd" path="res://assets/Asteroids/PNGs/Asteroid 01 - Explode.png" id="1_pth1n"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cdoec"]
+atlas = ExtResource("1_pth1n")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h7d6o"]
+atlas = ExtResource("1_pth1n")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bdapo"]
+atlas = ExtResource("1_pth1n")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g4u6y"]
+atlas = ExtResource("1_pth1n")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hyicb"]
+atlas = ExtResource("1_pth1n")
+region = Rect2(384, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y0v8h"]
+atlas = ExtResource("1_pth1n")
+region = Rect2(480, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hy63h"]
+atlas = ExtResource("1_pth1n")
+region = Rect2(576, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3dukk"]
+atlas = ExtResource("1_pth1n")
+region = Rect2(672, 0, 96, 96)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rgwmx"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cdoec")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h7d6o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bdapo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g4u6y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hyicb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y0v8h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hy63h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3dukk")
+}],
+"loop": true,
+"name": &"default",
+"speed": 15.0
+}]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_rgwmx")
+frame_progress = 0.573085

@@ -1,0 +1,13 @@
+keys,en,ru
+game_over_title,GAME OVER,ИГРА ОКОНЧЕНА
+score_label,Score,Счёт
+restart_btn,Restart,Начать заново
+continue_btn,Continue (with ad),Продолжить (с рекламой)
+play_btn,Play,Играть
+menu_title,Lumen Cascade,Lumen Cascade
+pause_title,Paused,Пауза
+resume_btn,Resume,Продолжить
+pilot_name,Pilot: %s,Пилот: %s
+auth_btn,Log in,Войти
+auth_benefits,"Cloud save, leaderboard","Сохранить прогресс в облаке, таблица лидеров"
+auth_failed_msg,Authorization error,Ошибка авторизации

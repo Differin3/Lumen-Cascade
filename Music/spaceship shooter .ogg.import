@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://crbphxw74t7ar"
+path="res://.godot/imported/spaceship shooter .ogg-449a703d473f65ff49c96ef38af9ddb9.oggvorbisstr"
+
+[deps]
+
+source_file="res://Music/spaceship shooter .ogg"
+dest_files=["res://.godot/imported/spaceship shooter .ogg-449a703d473f65ff49c96ef38af9ddb9.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

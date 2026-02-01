@@ -1,0 +1,510 @@
+[gd_scene load_steps=11 format=3 uid="uid://bdhh7b3vo271e"]
+
+[ext_resource type="PackedScene" uid="uid://bdqynu64adcrj" path="res://scenes/player/player.tscn" id="1_44kov"]
+[ext_resource type="Texture2D" uid="uid://dfrxi0nn6dfbf" path="res://assets/Backgrounds/Desert/desert-backgorund.png" id="1_icvuy"]
+[ext_resource type="Texture2D" uid="uid://rbji7aslwmkc" path="res://assets/Backgrounds/Desert/clouds.png" id="2_bp267"]
+[ext_resource type="Texture2D" uid="uid://dgr88g346opy0" path="res://assets/Backgrounds/Desert/clouds-transparent.png" id="3_ysxxh"]
+[ext_resource type="PackedScene" uid="uid://c1owab58gl4ti" path="res://scenes/enemy/enemy.tscn" id="5_t5w6y"]
+[ext_resource type="PackedScene" uid="uid://mvb4q5c8scn8" path="res://scenes/ui/HUD.tscn" id="7_0hudg"]
+[ext_resource type="Shader" uid="uid://gwo0br4prl68" path="res://shaders/post_fx.gdshader" id="8_post_fx"]
+[ext_resource type="AudioStream" uid="uid://crbphxw74t7ar" path="res://Music/spaceship shooter .ogg" id="9_music"]
+
+[sub_resource type="GDScript" id="GDScript_74oy5"]
+script/source = "extends Node2D
+
+@onready var parallax = $ParallaxBackground
+@onready var postfx_rect: ColorRect = $PostFX/ColorRect
+@onready var enemy_timer = $Timer_enemy
+@onready var rocket_baff_timer = $rocket_buff  # Переименовал для ясности
+@onready var shield_buff_timer = $shield_buff
+@onready var player = $player
+@onready var fallen_ship_timer = $fallen_ship
+# Настройки игры
+var base_scroll_speed = 100
+var enemy_spawn_rate = 1.5  # Секунд между спавном врагов
+var rocket_spawn_rate = 70.0  # Секунд между спавном ракетных баффов
+var shield_spawn_rate = 100.0  # Секунд между спавном баффов щитов
+var fallen_ship_rate = 100.0 # секунд между спавном упавшего коробля 
+var enemy_spawn_margin = 50  # Отступ от краев экрана
+var enemy_count = 0  # Счетчик враговвфвв
+var player_final_position: Vector2  # Финальная позиция игрока для анимации
+var boost_fx_amount: float = 0.0 # 0..1 плавный буст-эффект
+var damage_fx_amount: float = 0.0 # 0..1 тряска/сдвиг при уроне
+var yandex_games = null  # SDK Яндекс Игр
+var _web_page_hidden := false  # вкладка свернута / пауза — музыка на паузе
+var _sdk_pause_requested := false  # пауза от SDK
+
+# Загружаем сцены заранее
+var enemy_scene = preload(\"res://scenes/enemy/enemy.tscn\")
+var rocket_buff_scene = preload(\"res://scenes/buffs/rocket_buff.tscn\")
+var shield_buff_scene = preload(\"res://scenes/buffs/shield_buff.tscn\")
+var game_over_scene = preload(\"res://scenes/ui/game_over.tscn\")
+var pause_menu_scene = preload(\"res://scenes/ui/pause_menu.tscn\")
+var fallen_ship_scene = preload(\"res://scenes/enemy/fallen ship.tscn\")
+var player_scene = preload(\"res://scenes/player/player.tscn\")
+
+func _ready():
+	# Фоновая музыка — зацикливание
+	var bg = get_node_or_null(\"BackgroundMusic\")
+	if bg and bg.stream is AudioStreamOggVorbis:
+		bg.stream.loop = true
+	# Инициализация SDK Яндекс Игр и автоопределение языка (п. 2.14)
+	if OS.has_feature(\"web\"):
+		yandex_games = preload(\"res://scripts/yandex_games.gd\").new()
+		var loc = yandex_games.get_sdk_locale()
+		if loc != \"\":
+			TranslationServer.set_locale(loc)
+		yandex_games.init_sdk_pause_listeners()
+	
+	# Проверка наличия таймеров (ошибки оставляем, лишний лог убираем)
+	if enemy_timer:
+		if not enemy_timer.timeout.is_connected(_on_enemy_timer_timeout):
+			enemy_timer.timeout.connect(_on_enemy_timer_timeout)
+		enemy_timer.wait_time = enemy_spawn_rate
+		enemy_timer.start()
+	else:
+		push_error(\"ОШИБКА: Таймер врагов не найден!\")
+	
+	# Настройка таймера для ракетных баффов
+	if rocket_baff_timer:
+		if not rocket_baff_timer.timeout.is_connected(_on_rocket_buff_timer_timeout):
+			rocket_baff_timer.timeout.connect(_on_rocket_buff_timer_timeout)
+		rocket_baff_timer.wait_time = rocket_spawn_rate
+		rocket_baff_timer.start()
+	else:
+		push_error(\"ОШИБКА: Таймер ракетных баффов не найден!\")
+	
+	# Настройка таймера для баффов щитов
+	if shield_buff_timer:
+		if not shield_buff_timer.timeout.is_connected(_on_shield_buff_timer_timeout):
+			shield_buff_timer.timeout.connect(_on_shield_buff_timer_timeout)
+		shield_buff_timer.wait_time = shield_spawn_rate
+		shield_buff_timer.start()
+	else:
+		push_error(\"ОШИБКА: Таймер баффов щитов не найден!\")
+		
+	# Настройка таймера спавна упавшего корабля 
+	if fallen_ship_timer:
+		if not fallen_ship_timer.timeout.is_connected(_on_fallen_ship_timer_timeout):
+			fallen_ship_timer.timeout.connect(_on_fallen_ship_timer_timeout)
+		fallen_ship_timer.wait_time = fallen_ship_rate
+		fallen_ship_timer.start()
+	else:
+		push_error(\"ОШИБКА: Таймер упавшего корабля не найден!\")
+	
+	# Проверка наличия игрока
+	if player:
+		# Сохраняем финальную позицию игрока
+		player_final_position = player.position
+		# Устанавливаем начальную позицию ниже экрана
+		var viewport_size = get_viewport_rect().size
+		player.position = Vector2(player_final_position.x, viewport_size.y + 100)
+		# Запускаем анимацию появления
+		animate_player_entrance()
+	else:
+		push_error(\"ОШИБКА: Игрок не найден в сцене!\")
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(\"ui_cancel\") and player and not get_tree().paused:
+		_open_pause_menu()
+		get_viewport().set_input_as_handled()
+
+func _open_pause_menu() -> void:
+	var pm = pause_menu_scene.instantiate()
+	add_child(pm)
+	get_tree().paused = true
+	var bg = get_node_or_null(\"BackgroundMusic\")
+	if bg: bg.stream_paused = true
+	if yandex_games: yandex_games.gameplay_stop()
+
+func resume_game() -> void:
+	_web_page_hidden = false
+	get_tree().paused = false
+	var bg = get_node_or_null(\"BackgroundMusic\")
+	if bg: bg.stream_paused = false
+	if yandex_games: yandex_games.gameplay_start()
+
+func _physics_process(delta):
+	if OS.has_feature(\"web\") and yandex_games:
+		var sdk_pause = yandex_games.get_sdk_pause_state()
+		if sdk_pause == \"pause\" and not _sdk_pause_requested:
+			_sdk_pause_requested = true
+			yandex_games.gameplay_stop()
+			var bg = get_node_or_null(\"BackgroundMusic\")
+			if bg: bg.stream_paused = true
+			var pm = pause_menu_scene.instantiate()
+			add_child(pm)
+			get_tree().paused = true
+		elif sdk_pause == \"resume\" and _sdk_pause_requested:
+			_sdk_pause_requested = false
+			resume_game()
+	# Веб: при сворачивании вкладки или паузе в дебаг-меню — показываем окно паузы и ставим игру на паузу
+	if OS.has_feature(\"web\") and yandex_games and player:
+		var hidden = JavaScriptBridge.eval(\"window.yaGamesPageHidden === true\", true)
+		if hidden and not _web_page_hidden:
+			_web_page_hidden = true
+			yandex_games.gameplay_stop()
+			var bg = get_node_or_null(\"BackgroundMusic\")
+			if bg: bg.stream_paused = true
+			var pm = pause_menu_scene.instantiate()
+			add_child(pm)
+			get_tree().paused = true
+	update_parallax(delta)
+	var boosting := _is_player_boosting()
+	boost_fx_amount = lerpf(boost_fx_amount, 1.0 if boosting else 0.0, 8.0 * delta)
+	damage_fx_amount = lerpf(damage_fx_amount, 0.0, 6.0 * delta)
+	if postfx_rect and postfx_rect.material is ShaderMaterial:
+		var sm: ShaderMaterial = postfx_rect.material
+		sm.set_shader_parameter(\"lens_strength\", 0.14 * boost_fx_amount)
+		var tear_boost: float = lerpf(0.01, 0.03, boost_fx_amount)
+		var tear_damage: float = lerpf(0.0, 0.10, damage_fx_amount)
+		sm.set_shader_parameter(\"tear_strength\", tear_boost + tear_damage)
+	# Проверка состояния таймеров (для отладки)
+	if enemy_timer:
+		var enemy_time_left = enemy_timer.time_left
+		var enemy_is_stopped = enemy_timer.is_stopped()
+
+func add_damage_fx(amount: float = 0.6) -> void:
+	damage_fx_amount = clamp(damage_fx_amount + amount, 0.0, 1.0)
+	
+	if rocket_baff_timer:
+		var rocket_time_left = rocket_baff_timer.time_left
+		var rocket_is_stopped = rocket_baff_timer.is_stopped()
+	
+	# Проверка выхода упавших кораблей за пределы экрана
+	check_fallen_ships_out_of_bounds()
+
+func update_parallax(delta):
+	if !parallax:
+		return
+		
+	var scroll_speed = base_scroll_speed
+	if player and _is_player_boosting():
+		scroll_speed *= 1.5
+		
+	# Обновление параллакса с ручным управлением спрайтами для бесшовного зацикливания
+	for layer in parallax.get_children():
+		if layer is ParallaxLayer:
+			# Для всех слоёв используем стандартный motion_offset
+			layer.motion_offset.y += scroll_speed * layer.motion_scale.y * delta
+
+func get_scroll_speed() -> float:
+	var scroll_speed = base_scroll_speed
+	if player and _is_player_boosting():
+		scroll_speed *= 1.5
+	return scroll_speed
+
+func _is_player_boosting() -> bool:
+	if player and player.has_method(\"is_boosting\"):
+		return player.is_boosting()  # спрашиваем флаг буста у игрока (учитывает тач)
+	return Input.is_action_pressed(\"boost\")
+
+func _on_enemy_timer_timeout():
+	spawn_enemy()
+
+func _on_rocket_buff_timer_timeout():
+	spawn_rocket_buff()
+
+func _on_shield_buff_timer_timeout():
+	spawn_shield_buff()  # ИСПРАВЛЕНО: было fallen_ship_sprait()
+
+func _on_fallen_ship_timer_timeout():
+	spawn_fallen_ship()  # ИСПРАВЛЕНО: убрал комментарий
+	
+func spawn_enemy():
+	if !player:
+		print(\"Игрок не существует, пропускаю спавн врага\")
+		return
+		
+	if !enemy_scene:
+		push_error(\"ОШИБКА: Сцена врага не загружена!\")
+		return
+	
+	var enemy = enemy_scene.instantiate()
+	if !enemy:
+		push_error(\"ОШИБКА: Не удалось создать экземпляр врага\")
+		return
+	
+	# Установка позиции спавна
+	var viewport_size = get_viewport_rect().size
+	var spawn_x = randf_range(
+		enemy_spawn_margin, 
+		viewport_size.x - enemy_spawn_margin
+	)
+	
+	enemy.position = Vector2(spawn_x, -50)
+	
+	add_child(enemy)
+	enemy_count += 1
+	
+	# Увеличение сложности
+	enemy_spawn_rate = max(0.5, enemy_spawn_rate * .99)
+	enemy_timer.wait_time = enemy_spawn_rate
+
+func spawn_rocket_buff():
+	if !player:
+		print(\"Игрок не существует, пропускаю спавн ракетного баффа\")
+		return
+	
+	if !rocket_buff_scene:
+		push_error(\"ОШИБКА: Сцена ракетного баффа не загружена!\")
+		return
+	
+	var rocket_buff = rocket_buff_scene.instantiate()
+	if !rocket_buff:
+		push_error(\"ОШИБКА: Не удалось создать экземпляр ракетного баффа\")
+		return
+	
+	# Установка позиции спавна (аналогично врагам)
+	var viewport_size = get_viewport_rect().size
+	var spawn_x = randf_range(
+		enemy_spawn_margin, 
+		viewport_size.x - enemy_spawn_margin
+	)
+	
+	rocket_buff.position = Vector2(spawn_x, -50)
+	print(\"Позиция ракетного баффа: \", rocket_buff.position)
+	
+	add_child(rocket_buff)
+	print(\"Ракетный бафф успешно создан!\")
+
+func spawn_shield_buff():
+	if !player:
+		print(\"Игрок не существует, пропускаю спавн баффа щитов\")
+		return
+	
+	if !shield_buff_scene:
+		push_error(\"ОШИБКА: Сцена баффа щитов не загружена!\")
+		return
+	
+	var shield_buff = shield_buff_scene.instantiate()
+	if !shield_buff:
+		push_error(\"ОШИБКА: Не удалось создать экземпляр баффа щитов\")
+		return
+	
+	# Установка позиции спавна (аналогично врагам)
+	var viewport_size = get_viewport_rect().size
+	var spawn_x = randf_range(
+		enemy_spawn_margin, 
+		viewport_size.x - enemy_spawn_margin
+	)
+	
+	shield_buff.position = Vector2(spawn_x, -50)
+	print(\"Позиция баффа щитов: \", shield_buff.position)
+	
+	add_child(shield_buff)
+	print(\"Бафф щитов успешно создан!\")
+	
+func spawn_fallen_ship():  # ПЕРЕИМЕНОВАНО И ДОПОЛНЕНО: было fallen_ship_sprait()
+	if !player:
+		print(\"Игрок не существует, пропускаю спавн упавшего корабля\")
+		return
+	
+	# Разрешаем максимум три упавших корабля одновременно
+	var existing_fallen := get_tree().get_nodes_in_group(\"fallen_ship\")
+	if existing_fallen.size() >= 3:
+		return
+	
+	if !fallen_ship_scene:
+		push_error(\"ОШИБКА: Сцена упавшего корабля не загружена!\")
+		return
+	
+	var fallen_ship = fallen_ship_scene.instantiate()
+	if !fallen_ship:
+		push_error(\"ОШИБКА: Не удалось создать экземпляр упавшего корабля\")
+		return
+	
+	# Установка позиции спавна (аналогично врагам и баффам)
+	var viewport_size = get_viewport_rect().size
+	var spawn_x = randf_range(
+		enemy_spawn_margin, 
+		viewport_size.x - enemy_spawn_margin
+	)
+
+	fallen_ship.position = Vector2(spawn_x, -50)  # спавним сверху, он падает вниз
+
+	# Спавним в слое земли ParallaxBackground/ParallaxLayer,
+	# чтобы он автоматически оказывался под обоими слоями облаков.
+	var ground_layer := parallax.get_node(\"ParallaxLayer\") if parallax and parallax.has_node(\"ParallaxLayer\") else null
+	if ground_layer:
+		ground_layer.add_child(fallen_ship)
+	else:
+		add_child(fallen_ship)
+
+	print(\"Позиция упавшего корабля: \", fallen_ship.position)
+	print(\"Упавший корабль успешно создан!\")
+
+func update_score(amount: int) -> void:
+	enemy_count += amount / 100
+	var hud = get_tree().get_first_node_in_group(\"hud\")
+	if hud:
+		hud.set_score(enemy_count * 100)
+
+# Анимация появления игрока снизу экрана
+func animate_player_entrance():
+	if not player:
+		return
+	
+	# Блокируем управление во время анимации
+	if player.has_method(\"set_entering\"):
+		player.set_entering(true)
+	
+	# Запускаем анимацию заполнения здоровья параллельно с прилётом
+	var hud = get_tree().get_first_node_in_group(\"hud\")
+	if hud and hud.has_method(\"animate_hp_fill\"):
+		hud.animate_hp_fill(4, 1.2)  # заполняем до максимума за время анимации прилёта
+	
+	# Создаём твин для плавной анимации
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(player, \"position\", player_final_position, 1.2)
+	
+	# После завершения анимации разблокируем управление
+	await tween.finished
+	if player and player.has_method(\"set_entering\"):
+		player.set_entering(false)
+	if yandex_games:
+		yandex_games.gameplay_start()
+	print(\"Анимация появления игрока завершена\")
+
+# Обработчик уничтожения игрока
+func on_player_destroyed():
+	print(\"Игрок уничтожен!\")
+	if yandex_games:
+		yandex_games.gameplay_stop()
+	player = null
+	enemy_timer.stop()
+	rocket_baff_timer.stop()  # Останавливаем и таймер баффов
+	shield_buff_timer.stop()  # Останавливаем таймер баффов щитов
+	fallen_ship_timer.stop()  # Добавил: останавливаем таймер упавших кораблей
+	
+	# Показать экран завершения игры
+	var game_over = game_over_scene.instantiate()
+	add_child(game_over)
+	if game_over.has_method(\"set_score\"):
+		game_over.set_score(enemy_count * 100)
+
+func continue_game():
+	if player:
+		return
+	if not player_scene:
+		return
+	# Снимаем паузу после рекламы/отсчёта (вкладка могла уйти в фон при показе рекламы)
+	get_tree().paused = false
+	var bg = get_node_or_null(\"BackgroundMusic\")
+	if bg: bg.stream_paused = false
+	if yandex_games:
+		yandex_games.gameplay_start()
+	var p = player_scene.instantiate()
+	p.name = \"player\"
+	add_child(p)
+	player = p
+	player.position = player_final_position
+	if enemy_timer:
+		enemy_timer.start()
+	if rocket_baff_timer:
+		rocket_baff_timer.start()
+	if shield_buff_timer:
+		shield_buff_timer.start()
+	if fallen_ship_timer:
+		fallen_ship_timer.start()
+
+# Новая функция для проверки выхода упавших кораблей за пределы экрана
+func check_fallen_ships_out_of_bounds():
+	# Больше не удаляем упавшие корабли по Y, чтобы они
+	# не исчезали посередине экрана. Ограничение по количеству
+	# реализовано в spawn_fallen_ship().
+	pass
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_postfx"]
+shader = ExtResource("8_post_fx")
+shader_parameter/aberration_px = 0.0
+shader_parameter/vignette_strength = 0.18
+shader_parameter/grain_strength = 0.015
+shader_parameter/tear_strength = 0.01
+shader_parameter/tear_speed = 6.0
+shader_parameter/tear_lines = 220.0
+shader_parameter/sharpen_strength = 0.35
+shader_parameter/lens_strength = 0.0
+
+[node name="main" type="Node2D"]
+script = SubResource("GDScript_74oy5")
+
+[node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_music")
+autoplay = true
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+scale = Vector2(1.11894, 1)
+motion_scale = Vector2(1.5, 1.5)
+motion_mirroring = Vector2(0, 317)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+z_index = -1
+position = Vector2(160.86652, 625.0001)
+scale = Vector2(1.25677, 1.16912)
+texture = ExtResource("1_icvuy")
+
+[node name="Sprite2D2" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+z_index = -1
+position = Vector2(160.86655, -9)
+scale = Vector2(1.25677, 1.16728)
+texture = ExtResource("1_icvuy")
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2(0, 640)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer2"]
+z_index = 1
+position = Vector2(180.00002, 175.99998)
+scale = Vector2(1.40625, 1.60558)
+texture = ExtResource("3_ysxxh")
+
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2(0, 640)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer3"]
+modulate = Color(1, 1, 1, 0.9019608)
+z_index = 2
+position = Vector2(180.00002, 98)
+scale = Vector2(1.406, 1.406)
+texture = ExtResource("2_bp267")
+
+[node name="player" parent="." instance=ExtResource("1_44kov")]
+position = Vector2(181, 485)
+
+[node name="enemy" parent="." instance=ExtResource("5_t5w6y")]
+position = Vector2(77, -65)
+scale = Vector2(1, 1.00121)
+
+[node name="Timer_enemy" type="Timer" parent="."]
+wait_time = 1.509
+autostart = true
+
+[node name="rocket_buff" type="Timer" parent="."]
+wait_time = 30.0
+autostart = true
+
+[node name="shield_buff" type="Timer" parent="."]
+wait_time = 100.0
+autostart = true
+
+[node name="fallen_ship" type="Timer" parent="."]
+autostart = true
+
+[node name="Hud" parent="." instance=ExtResource("7_0hudg")]
+
+[node name="PostFX" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="ColorRect" type="ColorRect" parent="PostFX"]
+material = SubResource("ShaderMaterial_postfx")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
