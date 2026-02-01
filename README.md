@@ -5,11 +5,11 @@
 # Lumen Cascade
 
 <p align="center">
-  <img src="assets/logo_Lumen%20Cascade.png" alt="Lumen Cascade" width="320"/>
+  <img src="assets/maxresdefault.jpg" alt="Lumen Cascade" width="320"/>
 </p>
 
 <p align="center">
-  <strong>Vertical space shooter</strong> · Godot 4.5 · RU / EN
+  <strong>Vertical space shooter</strong> · Godot 4.5 · RU / EN · <strong>Яндекс Игры</strong>
 </p>
 
 ---
@@ -40,6 +40,18 @@
 3. Запусти сцену `main_menu` или нажми F5.
 
 Экспорт под Desktop / Web / Android — через **Project → Export**.
+
+## Платформа Яндекс Игры
+
+Игра разработана и публикуется на [Яндекс Играх](https://yandex.ru/games/). В веб-сборке используется **Yandex Games SDK v2**:
+
+- **Player** — авторизация (`openAuthDialog`), данные игрока (`getPlayer`), локаль (`get_sdk_locale`)
+- **Leaderboards** — отправка счёта (`setScore`), топ и позиция игрока (`getEntries`, `getPlayerEntry`)
+- **Rewarded** — реклама за продолжение после Game Over (`showRewardedVideo`)
+- **GameplayAPI** — старт/стоп геймплея, события паузы (`game_api_pause` / `game_api_resume`)
+- **Flags** — A/B-флаги (`getFlags`)
+
+Обёртка над SDK: `scripts/yandex_games.gd`; инициализация в `web_bild/index.html` и `custom_html_shell.html`.
 
 ## Технологии
 
