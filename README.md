@@ -9,11 +9,11 @@
 </p>
 
 <p align="center">
-  <strong>Vertical space shooter</strong> · Godot 4.5 · RU / EN · <strong>Яндекс Игры</strong>
+  <strong>Vertical space shooter</strong> · Godot 4.6 · RU / EN · <strong>Яндекс Игры</strong>
 </p>
 
 <p align="center">
-  <a href="https://godotengine.org"><img src="https://img.shields.io/badge/Godot-4.5-478cbf?logo=godot-engine" alt="Godot 4.5"/></a>
+  <a href="https://godotengine.org"><img src="https://img.shields.io/badge/Godot-4.6-478cbf?logo=godot-engine" alt="Godot 4.6"/></a>
   <a href="https://yandex.ru/games"><img src="https://img.shields.io/badge/Яндекс_Игры-платформа-red" alt="Яндекс Игры"/></a>
   <a href="#лицензия"><img src="https://img.shields.io/badge/лицензия-образовательный_проект-lightgrey" alt="Лицензия"/></a>
 </p>
@@ -28,6 +28,7 @@
 - Враги и боссы  
 - Буффы (щит, усиления)  
 - Взрывы и постобработка  
+- Централизованное управление звуком (музыка, SFX, UI)  
 - Локализация: русский и английский  
 
 ## Скриншоты
@@ -50,7 +51,7 @@
 
 ## Запуск
 
-1. Установи [Godot 4.5](https://godotengine.org/download) (режим GL Compatibility).
+1. Установи [Godot 4.6](https://godotengine.org/download) (режим GL Compatibility).
 2. Клонируй репозиторий и открой папку проекта в Godot.
 3. Запусти сцену `main_menu` или нажми F5.
 
@@ -63,11 +64,20 @@
 | Папка / файл | Назначение |
 |--------------|------------|
 | `scenes/` | Сцены: игрок, враги, пули, буффы, UI (меню, HUD, game over) |
-| `scripts/` | Логика: `yandex_games.gd` (обёртка SDK), меню, HUD, враги, пули |
+| `scripts/` | Логика: `main.gd` (уровень), `yandex_games.gd` (обёртка SDK), `AudioManager.gd` (звук), `AudioPlayer.gd` (компонент аудио), меню, HUD, враги, пули |
 | `assets/` | Спрайты, фоны, логотипы, анимации |
 | `shaders/` | Heat distort, post-fx |
 | `translations/` | Локализация (RU/EN) |
 | `custom_html_shell.html` | HTML-оболочка для веб-экспорта с Яндекс SDK |
+
+## Аудиосистема
+
+Централизованное управление звуком через **AudioManager** (Autoload):
+
+- **Регистрация** — все `AudioStreamPlayer` регистрируются в менеджере (типы: Music, SFX, UI)
+- **Пауза / возобновление** — при ESC, потере фокуса вкладки, паузе SDK звук ставится на паузу и возобновляется с того же места
+- **Полная остановка** — при смерти и показе rewarded-рекламы (требование Яндекс.Игр)
+- **Настройки** — громкость и mute сохраняются в `user://audio_settings.cfg`
 
 ## Платформа Яндекс Игры
 
@@ -83,7 +93,7 @@
 
 ## Технологии
 
-- **Godot** 4.5, GDScript  
+- **Godot** 4.6, GDScript  
 - Шейдеры (heat distort, post-fx)  
 - Переводы через CSV  
 
