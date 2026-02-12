@@ -4,6 +4,7 @@ const SPEED = 150
 const BOOST_MULT := 1.5 # как в фоне при boost
 var hp := 5
 var is_dead = false  # Флаг для отслеживания состояния смерти
+var _destroy_started := false  # Защита от двойного вызова destroy()
 
 func _ready():
 	# Сложность из удалённой конфигурации (флаг enemy_hp в Консоли Яндекс Игр)
@@ -34,6 +35,8 @@ func take_damage(damage = 1):
 		return  # Игнорируем урон если уже мертвы
 	
 	hp -= damage
+	if hp <= 0:
+		is_dead = true  # Сразу блокируем повторные вызовы (например, при попадании нескольких пуль)
 	
 	# Визуальный эффект попадания
 	$AnimatedSprite2D.modulate = Color.RED
@@ -44,6 +47,9 @@ func take_damage(damage = 1):
 		destroy()
 
 func destroy():
+	if _destroy_started:
+		return  # Уже обрабатывается смерть (защита от двойного вызова)
+	_destroy_started = true
 	is_dead = true
 	
 	# Отключаем коллизию

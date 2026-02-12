@@ -51,6 +51,11 @@ func set_score(score: int) -> void:
 	final_score = score
 	if score_value_label:
 		score_value_label.text = str(score)
+	# Блокируем кнопки до завершения обновления лидерборда
+	if restart_button:
+		restart_button.disabled = true
+	if continue_button:
+		continue_button.disabled = true
 	if yandex_games != null:
 		var local_best: int = yandex_games.get_local_best_score()
 		if local_best < 0 or score > local_best:
@@ -58,6 +63,11 @@ func set_score(score: int) -> void:
 		var best: int = await yandex_games.leaderboard_get_player_score_async(LEADERBOARD_NAME)
 		if best < 0 or score > best:
 			yandex_games.leaderboard_set_score(LEADERBOARD_NAME, score)
+	# Разблокируем кнопки после обновления лидерборда (или сразу, если не веб)
+	if restart_button and is_instance_valid(restart_button):
+		restart_button.disabled = false
+	if continue_button and is_instance_valid(continue_button):
+		continue_button.disabled = false
 
 
 func _on_restart_pressed() -> void:

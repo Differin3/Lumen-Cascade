@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://c5puujv60wvx8" path="res://assets/buff/Shield Generators/PNGs/Pickup Icon - Shield Generator - Front Shield.png" id="2_nxte5"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kwko7"]
+size = Vector2(15.5, 13.5)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6splg"]
 atlas = ExtResource("2_nxte5")
