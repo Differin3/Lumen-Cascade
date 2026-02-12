@@ -103,5 +103,5 @@
   <img src="assets/studio_logo_black.png" alt="PIXEL-FORGE" width="160"/>
 </p>
 <p align="center">
-  <sub>PIXEL-FORGE</sub>
+  <sub>SPRITE-FORGE</sub>
 </p>
