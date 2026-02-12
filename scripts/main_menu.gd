@@ -18,7 +18,11 @@ func _ready():
 		if loc != "":
 			TranslationServer.set_locale(loc)
 		yandex_games.loading_ready()
-		_fetch_remote_flags()
+		if play_button:
+			play_button.disabled = true
+		await _fetch_remote_flags()
+		if play_button:
+			play_button.disabled = false
 		if yandex_games.has_auth_history():
 			_fetch_player()
 	title_label.text = tr("menu_title")
@@ -74,7 +78,13 @@ func _set_title_glow(alpha: float):
 func _fetch_remote_flags() -> void:
 	if yandex_games == null:
 		return
-	var default_flags := {"difficult": "easy", "enemy_hp": "5"}
+	var default_flags := {
+		"difficult": "easy",
+		"enemy_hp": "5",
+		"rocket_spawn_rate": "70",
+		"shield_spawn_rate": "100",
+		"enemy_spawn_rate": "1.5"
+	}
 	var rc = get_node_or_null("/root/RemoteConfig")
 	if rc != null:
 		rc.set("flags", await yandex_games.get_flags_async(default_flags, []))

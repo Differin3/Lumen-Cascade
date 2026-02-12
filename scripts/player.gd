@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+signal destroyed
+
 # Настройки
 const NORMAL_SPEED = 300
 const BOOST_SPEED = 500
@@ -349,11 +351,9 @@ func destroy():
 	
 	# Отключаем коллизию
 	$CollisionShape2D.set_deferred("disabled", true)
-	
-	# Уведомляем главную сцену
-	if get_parent().has_method("on_player_destroyed"):
-		get_parent().on_player_destroyed()
-	
+
+	destroyed.emit()
+
 	# Можно добавить анимацию смерти перед удалением
 	await get_tree().create_timer(0.5).timeout
 	queue_free()
@@ -366,7 +366,7 @@ func activate_rocket_buff():
 	if can_boost_shoot:
 		await try_fire_rockets()  # сразу запускаем залп при подборе бафа
 # Функция для активации бафа шита (вызывается при подбое бафа)
-func activateShield_Buff():
+func activate_shield_buff():
 	Shield_Buff = true
 	if has_node("shield"):
 		$shield.visible = true
