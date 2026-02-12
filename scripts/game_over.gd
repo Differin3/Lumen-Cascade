@@ -1,5 +1,6 @@
 extends CanvasLayer  # слой поверх игры
 
+@onready var audio_manager: AudioSystem = AudioManager
 @onready var title_label: Label = $CenterContainer/VBoxContainer/ContentContainer/Title
 @onready var score_text_label: Label = $CenterContainer/VBoxContainer/ContentContainer/ScoreContainer/ScoreText
 @onready var score_value_label: Label = $CenterContainer/VBoxContainer/ContentContainer/ScoreContainer/ScoreValue
@@ -13,6 +14,7 @@ var countdown_label: Label
 
 
 func _ready() -> void:
+	visible = true  # Сцена по умолчанию имеет visible=false, включаем при показе
 	title_label.text = tr("game_over_title")
 	score_text_label.text = tr("score_label")
 	restart_button.text = tr("restart_btn")
@@ -69,7 +71,8 @@ func _on_continue_pressed() -> void:
 		continue_button.disabled = true
 	# Всегда пробуем показать рекламу; адаптер сам решит, доступен ли SDK
 	if yandex_games != null:
-		_set_bg_paused(true)
+		if audio_manager:
+			audio_manager.stop_all_audio()
 		yandex_games.gameplay_stop()  # перед показом рекламы
 		yandex_games.show_rewarded_ad(
 			_on_ad_rewarded,  # успешный просмотр
@@ -82,23 +85,13 @@ func _on_continue_pressed() -> void:
 
 func _on_ad_rewarded() -> void:
 	# Реклама просмотрена успешно — запускаем отсчёт, потом продолжаем игру
-	_set_bg_paused(false)
 	await _continue_game_with_countdown()
 
 
 func _on_ad_error(error: String) -> void:
 	# Ошибка при показе рекламы — всё равно разрешаем продолжение,
 	# чтобы игрок не застрял на экране Game Over
-	_set_bg_paused(false)
 	await _continue_game_with_countdown()
-
-
-func _set_bg_paused(paused: bool) -> void:
-	var scene = get_tree().current_scene
-	if scene:
-		var bg = scene.get_node_or_null("BackgroundMusic")
-		if bg:
-			bg.stream_paused = paused
 
 
 func _continue_game_with_countdown() -> void:
