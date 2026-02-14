@@ -5,7 +5,7 @@ extends CanvasLayer
 @onready var title_label: Label = $CenterContainer/VBoxContainer/Window/ContentContainer/Title
 @onready var pilot_label: Label = $CenterContainer/VBoxContainer/Window/ContentContainer/PilotLabel
 @onready var auth_button: Button = $CenterContainer/VBoxContainer/Window/ContentContainer/AuthButton
-@onready var auth_benefits_label: Label = $CenterContainer/VBoxContainer/Window/ContentContainer/AuthBenefitsLabel
+@onready var auth_benefits_label: Label = $AuthBenefitsLabel
 
 var main_scene = preload("res://main.tscn")
 var base_scroll_speed = 50.0  # скорость прокрутки фона в меню

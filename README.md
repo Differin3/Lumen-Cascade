@@ -118,6 +118,18 @@
 - Шейдеры (heat distort, post-fx)  
 - Переводы через CSV (RU/EN)  
 
+## CI / CD
+
+GitHub Actions автоматически собирает веб-версию при каждом push в `main`/`master` и при создании тега `v*`.
+
+| Триггер | Действие |
+|---------|----------|
+| Push в main/master | Экспорт HTML5, артефакт `web-build` |
+| Pull Request | Экспорт HTML5 (проверка сборки) |
+| Тег `v*` (напр. `v0.1.0`) | Экспорт + создание Release с артефактами |
+
+Workflow: [.github/workflows/ci.yml](.github/workflows/ci.yml). Используется [firebelley/godot-export](https://github.com/firebelley/godot-export).
+
 ## Сборка веб-версии (Яндекс Игры)
 
 1. **Project → Export** → пресет HTML5.
