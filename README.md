@@ -15,7 +15,7 @@
 <p align="center">
   <a href="https://godotengine.org"><img src="https://img.shields.io/badge/Godot-4.6-478cbf?logo=godot-engine" alt="Godot 4.6"/></a>
   <a href="https://yandex.ru/games"><img src="https://img.shields.io/badge/Яндекс_Игры-платформа-red" alt="Яндекс Игры"/></a>
-  <a href="#лицензия"><img src="https://img.shields.io/badge/лицензия-образовательный_проект-lightgrey" alt="Лицензия"/></a>
+  <a href="#лицензия"><img src="https://img.shields.io/badge/лицензия-личный_коммерческий-green" alt="Лицензия"/></a>
 </p>
 
 ---
@@ -126,7 +126,7 @@
 
 ## Лицензия
 
-Проект представлен в образовательных целях. Ресурсы (спрайты, музыка) могут иметь свои лицензии.
+Личный коммерческий проект. Ресурсы (спрайты, музыка) могут иметь свои лицензии.
 
 ---
 
