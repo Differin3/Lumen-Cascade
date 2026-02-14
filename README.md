@@ -2,7 +2,7 @@
   <img src="assets/studio_logo_black.png" alt="PIXEL-FORGE" width="280"/>
 </p>
 
-# Lumen Cascade
+<h1 align="center">Lumen Cascade</h1>
 
 <p align="center">
   <img src="assets/maxresdefault.jpg" alt="Lumen Cascade" width="320"/>
