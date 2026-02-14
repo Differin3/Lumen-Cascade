@@ -2,9 +2,7 @@
   <img src="assets/studio_logo_black.png" alt="PIXEL-FORGE" width="280"/>
 </p>
 
-<p align="center">
-  <img src="assets/lumen_cascade_title.png" alt="Lumen Cascade" width="400"/>
-</p>
+# Lumen Cascade
 
 <p align="center">
   <img src="assets/maxresdefault.jpg" alt="Lumen Cascade" width="320"/>
@@ -89,7 +87,15 @@
 - **Leaderboards** — отправка счёта (`setScore`), топ и позиция игрока (`getEntries`, `getPlayerEntry`)
 - **Rewarded** — реклама за продолжение после Game Over (кнопка «Продолжить» + пометка «за просмотр рекламы»)
 - **GameplayAPI** — старт/стоп геймплея, события паузы (`game_api_pause` / `game_api_resume`)
-- **Flags** — A/B-флаги (`getFlags`) для Remote Config (сложность, спавн врагов, баффы)
+- **Flags** — A/B-флаги (`getFlags`) для Remote Config. Таблица флагов:
+
+| Флаг | По умолчанию | Описание |
+|------|--------------|----------|
+| `difficult` | `easy` | Уровень сложности (зарезервировано) |
+| `enemy_hp` | `5` | HP врагов |
+| `enemy_spawn_rate` | `1.5` | Интервал спавна врагов, сек |
+| `rocket_spawn_rate` | `70` | Интервал спавна баффа «ракеты», сек |
+| `shield_spawn_rate` | `100` | Интервал спавна баффа «щит», сек |
 
 Обёртка над SDK: `scripts/yandex_games.gd`; инициализация в `web_bild/index.html` и `custom_html_shell.html`.
 
