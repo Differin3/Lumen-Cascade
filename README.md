@@ -2,7 +2,9 @@
   <img src="assets/studio_logo_black.png" alt="PIXEL-FORGE" width="280"/>
 </p>
 
-# Lumen Cascade
+<p align="center">
+  <img src="assets/lumen_cascade_title.png" alt="Lumen Cascade" width="400"/>
+</p>
 
 <p align="center">
   <img src="assets/maxresdefault.jpg" alt="Lumen Cascade" width="320"/>
@@ -20,13 +22,13 @@
 
 ---
 
-## О игре
+## Об игре
 
-**Lumen Cascade** — вертикальный космический шутер: управляй кораблём, сбивай врагов, собирай буффы и держись как можно дольше.
+**Lumen Cascade** — вертикальный космический шутер: управляй кораблём, сбивай врагов, собирай баффы и держись как можно дольше.
 
 - Корабль с разными двигателями и оружием  
 - Враги и боссы  
-- Буффы (щит, усиления)  
+- Баффы (щит, ракеты)  
 - Взрывы и постобработка  
 - Централизованное управление звуком (музыка, SFX, UI)  
 - Локализация: русский и английский  
@@ -63,9 +65,9 @@
 
 | Папка / файл | Назначение |
 |--------------|------------|
-| `scenes/` | Сцены: игрок, враги, пули, буффы, UI (меню, HUD, game over) |
-| `scripts/` | Логика: `main.gd` (уровень), `yandex_games.gd` (обёртка SDK), `AudioManager.gd` (звук), `AudioPlayer.gd` (компонент аудио), меню, HUD, враги, пули |
-| `assets/` | Спрайты, фоны, логотипы, анимации |
+| `scenes/` | Сцены: игрок, враги, пули, баффы, UI (меню, HUD, game over, пауза) |
+| `scripts/` | Логика: `main.gd` (уровень), `yandex_games.gd` (обёртка SDK), `AudioManager.gd` (звук), `remote_config.gd` (флаги), меню, HUD, game_over, враги, пули |
+| `assets/` | Спрайты, фоны, шрифты (Project Space), тема (cosmic_theme) |
 | `shaders/` | Heat distort, post-fx |
 | `translations/` | Локализация (RU/EN) |
 | `custom_html_shell.html` | HTML-оболочка для веб-экспорта с Яндекс SDK |
@@ -85,17 +87,30 @@
 
 - **Player** — авторизация (`openAuthDialog`), данные игрока (`getPlayer`), локаль (`get_sdk_locale`)
 - **Leaderboards** — отправка счёта (`setScore`), топ и позиция игрока (`getEntries`, `getPlayerEntry`)
-- **Rewarded** — реклама за продолжение после Game Over (`showRewardedVideo`)
+- **Rewarded** — реклама за продолжение после Game Over (кнопка «Продолжить» + пометка «за просмотр рекламы»)
 - **GameplayAPI** — старт/стоп геймплея, события паузы (`game_api_pause` / `game_api_resume`)
-- **Flags** — A/B-флаги (`getFlags`)
+- **Flags** — A/B-флаги (`getFlags`) для Remote Config (сложность, спавн врагов, баффы)
 
 Обёртка над SDK: `scripts/yandex_games.gd`; инициализация в `web_bild/index.html` и `custom_html_shell.html`.
+
+## Шрифты
+
+Проект использует шрифт **Project Space** (Alexander Sviridov) — космический стиль с поддержкой кириллицы.
+
+| Файл | Назначение |
+|------|------------|
+| `assets/fonts/Project Space Font/` | Исходные шрифты (ttf, otf) |
+| `assets/theme/cosmic_font_bold.tres` | FontVariation с `variation_embolden = 0.35` |
+| `assets/theme/cosmic_theme.tres` | Глобальная тема (подключена в Project Settings → GUI) |
+
+Шрифты распространяются по [SIL Open Font License 1.1](http://scripts.sil.org/OFL) — **можно свободно использовать** в проекте, README, модифицировать и распространять. Подробности в `assets/fonts/Project Space Font/OFL.txt`.
 
 ## Технологии
 
 - **Godot** 4.6, GDScript  
+- Шрифт **Project Space**, тема `cosmic_theme.tres`  
 - Шейдеры (heat distort, post-fx)  
-- Переводы через CSV  
+- Переводы через CSV (RU/EN)  
 
 ## Сборка веб-версии (Яндекс Игры)
 

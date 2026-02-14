@@ -6,6 +6,7 @@ extends CanvasLayer  # слой поверх игры
 @onready var score_value_label: Label = $CenterContainer/VBoxContainer/ContentContainer/ScoreContainer/ScoreValue
 @onready var restart_button: Button = $CenterContainer/VBoxContainer/ContentContainer/RestartButton
 @onready var continue_button: Button = $CenterContainer/VBoxContainer/ContentContainer/ContinueButton
+@onready var ad_note_label: Label = $CenterContainer/VBoxContainer/ContentContainer/AdNoteLabel
 @onready var window_root: Control = $CenterContainer
 
 var final_score: int = 0
@@ -14,12 +15,15 @@ var countdown_label: Label
 
 
 func _ready() -> void:
+	process_mode = PROCESS_MODE_ALWAYS  # чтобы кнопки работали при паузе дерева (гонка с focus-out)
 	visible = true  # Сцена по умолчанию имеет visible=false, включаем при показе
 	title_label.text = tr("game_over_title")
 	score_text_label.text = tr("score_label")
 	restart_button.text = tr("restart_btn")
 	if continue_button:
 		continue_button.text = tr("continue_btn")
+	if ad_note_label:
+		ad_note_label.text = tr("continue_ad_note")
 	restart_button.pressed.connect(_on_restart_pressed)
 	if continue_button:
 		continue_button.pressed.connect(_on_continue_pressed)
@@ -37,7 +41,7 @@ func _ready() -> void:
 	countdown_label.anchor_bottom = 1.0
 	countdown_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	countdown_label.grow_vertical = Control.GROW_DIRECTION_BOTH
-	countdown_label.add_theme_font_size_override("font_size", 96)
+	countdown_label.add_theme_font_size_override("font_size", 48)
 	add_child(countdown_label)
 
 	# Инициализируем SDK Яндекс Игр (только веб)

@@ -100,8 +100,10 @@ func unregister_player(player: AudioStreamPlayer) -> void:
 # Полная остановка всех звуков (требование Яндекс Игр)
 func stop_all_audio() -> void:
 	for player in _registered_players:
-		if player.playing:
-			player.stop()
+		if is_instance_valid(player):
+			player.stream_paused = false  # сбрасываем перед stop для чистого состояния
+			if player.playing:
+				player.stop()
 	
 	# Очищаем список приостановленных плееров
 	_paused_players.clear()
@@ -130,8 +132,10 @@ func stop_music() -> void:
 # Воспроизведение только музыки
 func play_music() -> void:
 	for player in _music_players:
-		if is_instance_valid(player) and not player.playing:
-			player.play()
+		if is_instance_valid(player):
+			player.stream_paused = false  # сбрасываем паузу (важно после рекламы/stop_all)
+			if not player.playing:
+				player.play()
 
 # Воспроизведение звука с учетом типа
 func play_sound(sound_type: SoundType = SoundType.SFX) -> void:

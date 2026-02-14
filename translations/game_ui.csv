@@ -2,7 +2,8 @@ keys,en,ru
 game_over_title,GAME OVER,ИГРА ОКОНЧЕНА
 score_label,Score,Счёт
 restart_btn,Restart,Начать заново
-continue_btn,Continue (with ad),Продолжить (с рекламой)
+continue_btn,Continue,Продолжить
+continue_ad_note,by watching an ad,за просмотр рекламы
 play_btn,Play,Играть
 menu_title,Lumen Cascade,Lumen Cascade
 pause_title,Paused,Пауза

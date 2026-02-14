@@ -35,6 +35,10 @@ window/size/viewport_height=640
 window/size/initial_position_type=0
 window/stretch/mode="viewport"
 
+[gui]
+
+theme/custom="res://assets/theme/cosmic_theme.tres"
+
 [input]
 
 ui_cancel={

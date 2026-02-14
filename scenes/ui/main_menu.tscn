@@ -96,7 +96,7 @@ theme_override_colors/font_outline_color = Color(0.101960786, 0.2, 0.49803922, 1
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 24
 text = "Lumen Cascade"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -104,14 +104,15 @@ vertical_alignment = 1
 [node name="PilotLabel" type="Label" parent="CenterContainer/VBoxContainer/Window/ContentContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 12
 horizontal_alignment = 1
 
 [node name="AuthBenefitsLabel" type="Label" parent="CenterContainer/VBoxContainer/Window/ContentContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 12
 text = "Сохранить прогресс в облаке, таблица лидеров"
+autowrap_mode = 3
 horizontal_alignment = 1
 
 [node name="AuthButton" type="Button" parent="CenterContainer/VBoxContainer/Window/ContentContainer"]

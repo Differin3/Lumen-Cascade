@@ -356,9 +356,19 @@ func add_damage_fx(amount: float = 0.6) -> void:
 	damage_fx_amount = clamp(damage_fx_amount + amount, 0.0, 1.0)
 
 
+func _start_music_after_continue() -> void:
+	if audio_manager:
+		audio_manager.play_music()
+
+
 func on_player_destroyed():
 	print("Игрок уничтожен!")
 	_game_over_active = true
+	# Сбрасываем паузу и убираем меню паузы, чтобы Game Over был интерактивен (гонка с focus-out)
+	get_tree().paused = false
+	for child in get_children():
+		if child.name == "PauseMenu":
+			child.queue_free()
 	if audio_manager:
 		audio_manager.stop_all_audio()
 	if yandex_games:
@@ -382,7 +392,7 @@ func continue_game():
 	_game_over_active = false
 	get_tree().paused = false
 	if audio_manager:
-		audio_manager.play_music()
+		call_deferred("_start_music_after_continue")
 	if yandex_games:
 		yandex_games.gameplay_start()
 	var p = player_scene.instantiate()
@@ -392,6 +402,15 @@ func continue_game():
 	add_child(p)
 	player = p
 	player.position = player_final_position
+	# Обновляем HUD: полоска HP и сброс щита/ракет
+	var hud = get_tree().get_first_node_in_group("hud")
+	if hud:
+		if hud.has_method("animate_hp_fill"):
+			hud.animate_hp_fill(4, 1.2)
+		if hud.has_method("set_shield"):
+			hud.set_shield(0)
+		if hud.has_method("set_rocket_buff_active"):
+			hud.set_rocket_buff_active(false)
 	if enemy_timer:
 		enemy_timer.start()
 	if rocket_buff_timer:
@@ -400,5 +419,3 @@ func continue_game():
 		shield_buff_timer.start()
 	if fallen_ship_timer:
 		fallen_ship_timer.start()
-
-

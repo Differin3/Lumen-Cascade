@@ -33,7 +33,7 @@ alignment = 1
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 18
 text = "Пауза"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -41,9 +41,11 @@ vertical_alignment = 1
 [node name="ResumeButton" type="Button" parent="CenterContainer/VBoxContainer/ContentContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 14
 text = "Продолжить"
 
 [node name="RestartButton" type="Button" parent="CenterContainer/VBoxContainer/ContentContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 14
 text = "Начать заново"

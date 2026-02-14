@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://mvb4q5c8scn8"]
+[gd_scene format=3 uid="uid://mvb4q5c8scn8"]
 
 [ext_resource type="Script" uid="uid://nfkrbeun3mu4" path="res://scripts/HUD.gd" id="1_5t7tm"]
 [ext_resource type="Texture2D" uid="uid://baqf6y16ygopm" path="res://assets/Hearts/PNG/health_bar/health_bar_decoration.png" id="2_8mh7d"]
@@ -120,10 +120,10 @@ animations = [{
 "speed": 10.0
 }]
 
-[node name="Hud" type="CanvasLayer" groups=["hud"]]
+[node name="Hud" type="CanvasLayer" unique_id=2146425207 groups=["hud"]]
 script = ExtResource("1_5t7tm")
 
-[node name="Hud_Root_TopBar#HpBar" type="TextureProgressBar" parent="."]
+[node name="Hud_Root_TopBar#HpBar" type="TextureProgressBar" parent="." unique_id=1488976598]
 offset_left = 5.0
 offset_top = 8.0
 offset_right = 349.0
@@ -134,7 +134,7 @@ texture_under = ExtResource("2_8mh7d")
 texture_progress = ExtResource("3_0i1pc")
 texture_progress_offset = Vector2(14, 0)
 
-[node name="TextureProgressBar_shield" type="TextureProgressBar" parent="."]
+[node name="TextureProgressBar_shield" type="TextureProgressBar" parent="." unique_id=1886902497]
 offset_left = 5.0
 offset_top = 27.0
 offset_right = 349.0
@@ -145,21 +145,23 @@ texture_progress = ExtResource("5_27qdo")
 texture_progress_offset = Vector2(14, 2)
 tint_over = Color(0.98, 0.98, 0.98, 1)
 
-[node name="Hud_Root_TopBar_ScoreBG#ScoreLabel" type="Label" parent="."]
+[node name="Hud_Root_TopBar_ScoreBG#ScoreLabel" type="Label" parent="." unique_id=357548101]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = 47.0
-offset_right = -310.0
-offset_bottom = -569.0
+offset_top = 45.0
+offset_right = -224.0
+offset_bottom = -566.2729
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.6559085, 0.87025785)
+theme_override_font_sizes/font_size = 14
 text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
+text_overrun_behavior = 3
 
-[node name="Hud#Root" type="MarginContainer" parent="."]
+[node name="Hud#Root" type="MarginContainer" parent="." unique_id=552235079]
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
@@ -169,7 +171,7 @@ offset_right = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Hud_Root#TopBar" type="VBoxContainer" parent="."]
+[node name="Hud_Root#TopBar" type="VBoxContainer" parent="." unique_id=906764510]
 visible = false
 anchors_preset = 10
 anchor_right = 1.0
@@ -178,7 +180,7 @@ offset_right = -15.0
 offset_bottom = 53.0
 grow_horizontal = 2
 
-[node name="rocket buff_Sprite" type="AnimatedSprite2D" parent="."]
+[node name="rocket buff_Sprite" type="AnimatedSprite2D" parent="." unique_id=1821907937]
 visible = false
 position = Vector2(80, 16)
 scale = Vector2(0.4, 0.4)
