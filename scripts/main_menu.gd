@@ -5,9 +5,11 @@ extends CanvasLayer
 @onready var title_label: Label = $CenterContainer/VBoxContainer/Window/ContentContainer/Title
 @onready var pilot_label: Label = $CenterContainer/VBoxContainer/Window/ContentContainer/PilotLabel
 @onready var auth_button: Button = $CenterContainer/VBoxContainer/Window/ContentContainer/AuthButton
-@onready var auth_benefits_label: Label = $AuthBenefitsLabel
+@onready var auth_benefits_label: Label = $CenterContainer/VBoxContainer/Window/ContentContainer/AuthBenefitsLabel
+@onready var auth_optional_label: Label = $CenterContainer/VBoxContainer/Window/ContentContainer/AuthOptionalLabel
 
 var main_scene = preload("res://main.tscn")
+var auth_confirm_dialog_scene = preload("res://scenes/ui/auth_confirm_dialog.tscn")
 var base_scroll_speed = 50.0  # скорость прокрутки фона в меню
 var yandex_games = null
 
@@ -32,15 +34,19 @@ func _ready():
 	play_button.pressed.connect(_on_play_pressed)
 	if pilot_label:
 		pilot_label.visible = false
-	# На веб: кнопка «Войти» и пояснение преимуществ (п. 1.2.1 требований Яндекса)
+	# На веб: кнопка «Войти», пояснение преимуществ и «можно играть без входа» (п. 1.2.1 требований Яндекса)
+	var on_web := OS.has_feature("web")
 	if auth_button:
-		auth_button.visible = OS.has_feature("web")
+		auth_button.visible = on_web
 	if auth_benefits_label:
-		auth_benefits_label.visible = OS.has_feature("web")
+		auth_benefits_label.visible = on_web
 		var benefits_text := tr("auth_benefits")
 		if benefits_text == "auth_benefits":
 			benefits_text = "Сохранить прогресс в облаке, таблица лидеров"
 		auth_benefits_label.text = benefits_text
+	if auth_optional_label:
+		auth_optional_label.visible = on_web
+		auth_optional_label.text = tr("auth_optional")
 	_style_title()
 
 func _physics_process(delta):
@@ -104,12 +110,17 @@ func _fetch_player() -> void:
 			auth_button.visible = false
 		if is_instance_valid(auth_benefits_label):
 			auth_benefits_label.visible = false
+		if is_instance_valid(auth_optional_label):
+			auth_optional_label.visible = false
 	else:
 		pilot_label.visible = false
+		var on_web := OS.has_feature("web")
 		if is_instance_valid(auth_button):
-			auth_button.visible = OS.has_feature("web")
+			auth_button.visible = on_web
 		if is_instance_valid(auth_benefits_label):
-			auth_benefits_label.visible = OS.has_feature("web")
+			auth_benefits_label.visible = on_web
+		if is_instance_valid(auth_optional_label):
+			auth_optional_label.visible = on_web
 
 func _on_auth_pressed() -> void:
 	if yandex_games == null or not is_instance_valid(auth_button):
@@ -124,6 +135,20 @@ func _on_auth_pressed() -> void:
 			auth_button.disabled = false
 		yandex_games.set_auth_history()
 		await _fetch_player()
+		return
+	# П. 1.2.1: показываем всплывающее окно с подтверждением и отменой (CanvasLayer + затемнение + карточка)
+	var dialog = auth_confirm_dialog_scene.instantiate()
+	add_child(dialog)
+	var confirmed := false
+	dialog.confirmed.connect(func() -> void: confirmed = true)
+	dialog.canceled.connect(func() -> void: pass)  # confirmed остаётся false
+	dialog.visible = true
+	while dialog.visible:
+		await get_tree().process_frame
+	dialog.queue_free()
+	if not confirmed:
+		if is_instance_valid(auth_button):
+			auth_button.disabled = false
 		return
 	var ok: bool = await yandex_games.open_auth_dialog_async()
 	if is_instance_valid(auth_button):

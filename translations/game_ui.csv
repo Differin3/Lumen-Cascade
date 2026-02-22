@@ -11,4 +11,8 @@ resume_btn,Resume,Продолжить
 pilot_name,Pilot: %s,Пилот: %s
 auth_btn,Log in,Войти
 auth_benefits,"Cloud save, leaderboard","Сохранить прогресс в облаке, таблица лидеров"
+auth_confirm_title,Log in to account,Войти в аккаунт
+auth_confirm_ok,Confirm,Подтвердить
+auth_cancel,Cancel,Отмена
+auth_optional,"You can play without signing in","Можно играть без входа"
 auth_failed_msg,Authorization error,Ошибка авторизации

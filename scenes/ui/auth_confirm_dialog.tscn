@@ -1,0 +1,120 @@
+[gd_scene load_steps=4 format=3 uid="uid://bqx7authconfirm1"]
+
+[ext_resource type="Script" path="res://scripts/auth_confirm_dialog.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.1, 0.12, 0.18, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.4, 0.55, 0.85, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 8
+shadow_color = Color(0, 0, 0, 0.5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_confirm"]
+bg_color = Color(0.22, 0.38, 0.55, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.45, 0.65, 0.9, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_cancel"]
+bg_color = Color(0.18, 0.18, 0.22, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.4, 0.45, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="AuthConfirmDialog" type="CanvasLayer"]
+visible = false
+script = ExtResource("1_script")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.72)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelRoot" type="PanelContainer" parent="CenterContainer"]
+layout_mode = 2
+size_flags_horizontal = 12
+size_flags_vertical = 12
+custom_minimum_size = Vector2(300, 180)
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelRoot"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/PanelRoot/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/PanelRoot/MarginContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.6, 0.85, 1, 1)
+text = "Войти в аккаунт"
+horizontal_alignment = 1
+
+[node name="BodyLabel" type="Label" parent="CenterContainer/PanelRoot/MarginContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.88, 0.88, 0.92, 1)
+text = "Сохранить прогресс в облаке, таблица лидеров"
+autowrap_mode = 3
+horizontal_alignment = 1
+
+[node name="ButtonsHBox" type="HBoxContainer" parent="CenterContainer/PanelRoot/MarginContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="ConfirmButton" type="Button" parent="CenterContainer/PanelRoot/MarginContainer/VBox/ButtonsHBox"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.95, 0.95, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_confirm")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_confirm")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_confirm")
+text = "Подтвердить"
+
+[node name="CancelButton" type="Button" parent="CenterContainer/PanelRoot/MarginContainer/VBox/ButtonsHBox"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_cancel")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_cancel")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_cancel")
+text = "Отмена"

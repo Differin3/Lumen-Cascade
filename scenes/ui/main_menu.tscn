@@ -53,23 +53,6 @@ position = Vector2(180.00002, 738)
 scale = Vector2(1.406, 1.406)
 texture = ExtResource("2_bp267")
 
-[node name="AuthBenefitsLabel" type="Label" parent="."]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -160.0
-offset_top = -50.0
-offset_right = 160.0
-offset_bottom = -20.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.75, 0.75, 0.8, 0.9)
-text = "Сохранить прогресс в облаке, таблица лидеров"
-autowrap_mode = 3
-horizontal_alignment = 1
-
 [node name="CenterContainer" type="CenterContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
@@ -124,11 +107,30 @@ size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 12
 horizontal_alignment = 1
 
+[node name="AuthBenefitsLabel" type="Label" parent="CenterContainer/VBoxContainer/Window/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(220, 0)
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.92, 0.92, 0.95, 1)
+text = "Сохранить прогресс в облаке, таблица лидеров"
+autowrap_mode = 3
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
 [node name="AuthButton" type="Button" parent="CenterContainer/VBoxContainer/Window/ContentContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Войти"
+
+[node name="AuthOptionalLabel" type="Label" parent="CenterContainer/VBoxContainer/Window/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.78, 0.78, 0.82, 1)
+text = "Можно играть без входа"
+horizontal_alignment = 1
 
 [node name="PlayButton" type="Button" parent="CenterContainer/VBoxContainer/Window/ContentContainer"]
 custom_minimum_size = Vector2(200, 60)
