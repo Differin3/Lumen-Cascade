@@ -14,8 +14,14 @@
 
 <p align="center">
   <a href="https://godotengine.org"><img src="https://img.shields.io/badge/Godot-4.6-478cbf?logo=godot-engine" alt="Godot 4.6"/></a>
-  <a href="https://yandex.ru/games"><img src="https://img.shields.io/badge/Яндекс_Игры-платформа-red" alt="Яндекс Игры"/></a>
+  <a href="https://yandex.ru/games/app/lumen-cascade-308818"><img src="https://img.shields.io/badge/Яндекс_Игры-страница_игры-ffcc00?logo=yandex&logoColor=000" alt="Lumen Cascade на Яндекс Играх"/></a>
   <a href="#лицензия"><img src="https://img.shields.io/badge/лицензия-личный_коммерческий-green" alt="Лицензия"/></a>
+</p>
+
+<p align="center">
+  <a href="https://yandex.ru/games/app/lumen-cascade-308818">
+    <img src="https://img.shields.io/badge/Играть%20в%20Lumen%20Cascade-Яндекс%20Игры-ffcc00?logo=yandex&logoColor=000" alt="Играть в Lumen Cascade на Яндекс Играх"/>
+  </a>
 </p>
 
 ---
@@ -57,7 +63,7 @@
 
 Экспорт под Desktop / Web / Android — через **Project → Export**.
 
-**Ссылка на игру (Яндекс Игры):https://yandex.ru/games/app/308818?lang=ru
+**Ссылка на игру (Яндекс Игры):** [Играть в Lumen Cascade](https://yandex.ru/games/app/lumen-cascade-308818)
 
 ## Структура проекта
 
