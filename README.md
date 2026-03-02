@@ -14,8 +14,15 @@
 
 <p align="center">
   <a href="https://godotengine.org"><img src="https://img.shields.io/badge/Godot-4.6-478cbf?logo=godot-engine" alt="Godot 4.6"/></a>
-  <a href="https://yandex.ru/games/app/lumen-cascade-308818"><img src="https://img.shields.io/badge/Яндекс_Игры-страница_игры-ffcc00?logo=yandex&logoColor=000" alt="Lumen Cascade на Яндекс Играх"/></a>
+  <a href="https://yandex.ru/games"><img src="https://img.shields.io/badge/Яндекс_Игры-платформа-red" alt="Яндекс Игры платформа"/></a>
+  <a href="https://yandex.ru/games/app/lumen-cascade-308818"><img src="https://img.shields.io/badge/Lumen_Cascade-на_Яндекс_Играх-ffcc00?logo=yandex&logoColor=000" alt="Lumen Cascade на Яндекс Играх"/></a>
   <a href="#лицензия"><img src="https://img.shields.io/badge/лицензия-личный_коммерческий-green" alt="Лицензия"/></a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Tech-Godot_4.6_|_GDScript-478cbf" alt="Godot 4.6 · GDScript"/>
+  <img src="https://img.shields.io/badge/Платформы-Web_|_Desktop_|_Android-orange" alt="Web / Desktop / Android"/>
+  <img src="https://img.shields.io/badge/Языки-RU_|_EN-blue" alt="Языки: RU / EN"/>
 </p>
 
 <p align="center">
