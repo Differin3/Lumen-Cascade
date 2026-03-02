@@ -4,6 +4,7 @@ extends CanvasLayer
 @onready var parallax = $ParallaxBackground
 @onready var title_label: Label = $CenterContainer/VBoxContainer/Window/ContentContainer/Title
 @onready var pilot_label: Label = $CenterContainer/VBoxContainer/Window/ContentContainer/PilotLabel
+@onready var logout_button: Button = $CenterContainer/VBoxContainer/Window/ContentContainer/LogoutButton
 @onready var auth_button: Button = $CenterContainer/VBoxContainer/Window/ContentContainer/AuthButton
 @onready var auth_benefits_label: Label = $CenterContainer/VBoxContainer/Window/ContentContainer/AuthBenefitsLabel
 @onready var auth_optional_label: Label = $CenterContainer/VBoxContainer/Window/ContentContainer/AuthOptionalLabel
@@ -32,6 +33,10 @@ func _ready():
 	auth_button.text = tr("auth_btn")
 	auth_button.pressed.connect(_on_auth_pressed)
 	play_button.pressed.connect(_on_play_pressed)
+	if logout_button:
+		logout_button.text = tr("logout_btn")
+		logout_button.visible = false
+		logout_button.pressed.connect(_on_logout_pressed)
 	if pilot_label:
 		pilot_label.visible = false
 	# На веб: кнопка «Войти», пояснение преимуществ и «можно играть без входа» (п. 1.2.1 требований Яндекса)
@@ -112,6 +117,8 @@ func _fetch_player() -> void:
 			auth_benefits_label.visible = false
 		if is_instance_valid(auth_optional_label):
 			auth_optional_label.visible = false
+		if is_instance_valid(logout_button):
+			logout_button.visible = OS.has_feature("web")
 	else:
 		pilot_label.visible = false
 		var on_web := OS.has_feature("web")
@@ -121,6 +128,25 @@ func _fetch_player() -> void:
 			auth_benefits_label.visible = on_web
 		if is_instance_valid(auth_optional_label):
 			auth_optional_label.visible = on_web
+		if is_instance_valid(logout_button):
+			logout_button.visible = false
+
+
+func _on_logout_pressed() -> void:
+	if yandex_games == null:
+		return
+	yandex_games.clear_auth_history()
+	if is_instance_valid(pilot_label):
+		pilot_label.visible = false
+	var on_web := OS.has_feature("web")
+	if is_instance_valid(auth_button):
+		auth_button.visible = on_web
+	if is_instance_valid(auth_benefits_label):
+		auth_benefits_label.visible = on_web
+	if is_instance_valid(auth_optional_label):
+		auth_optional_label.visible = on_web
+	if is_instance_valid(logout_button):
+		logout_button.visible = false
 
 func _on_auth_pressed() -> void:
 	if yandex_games == null or not is_instance_valid(auth_button):

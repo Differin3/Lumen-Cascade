@@ -199,6 +199,12 @@ func set_auth_history() -> void:
 	JavaScriptBridge.eval("try{localStorage.setItem('yg_auth_seen','1')}catch(e){}", false)
 
 
+func clear_auth_history() -> void:
+	if not OS.has_feature("web"):
+		return
+	JavaScriptBridge.eval("try{localStorage.removeItem('yg_auth_seen')}catch(e){}", false)
+
+
 # Локальный рекорд (guest): хранится в localStorage
 func get_local_best_score(key: String = "yg_best_score") -> int:
 	if not OS.has_feature("web"):

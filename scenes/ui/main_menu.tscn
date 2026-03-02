@@ -107,6 +107,13 @@ size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 12
 horizontal_alignment = 1
 
+[node name="LogoutButton" type="Button" parent="CenterContainer/VBoxContainer/Window/ContentContainer"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 10
+text = "Выйти из аккаунта"
+
 [node name="AuthBenefitsLabel" type="Label" parent="CenterContainer/VBoxContainer/Window/ContentContainer"]
 layout_mode = 2
 size_flags_horizontal = 4

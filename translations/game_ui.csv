@@ -15,4 +15,5 @@ auth_confirm_title,Log in to account,Войти в аккаунт
 auth_confirm_ok,Confirm,Подтвердить
 auth_cancel,Cancel,Отмена
 auth_optional,"You can play without signing in","Можно играть без входа"
+logout_btn,Log out,Выйти из аккаунта
 auth_failed_msg,Authorization error,Ошибка авторизации
